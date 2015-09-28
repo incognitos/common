@@ -19,4 +19,9 @@ public class AdderTest {
 		assertEquals("Sum of 1 + 1 is 2", 2, sum);
 	}
 
+	@Test
+	public void testNegative() {
+		int sum = adder.add(4, -1);
+		assertEquals("Sum of 4 and -1 is 3", 3, sum);
+	}
 }
