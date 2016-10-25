@@ -20,8 +20,8 @@ public class DBConnection {
 			e.printStackTrace();
 		}
 		conn = DriverManager.getConnection(
-				"jdbc:sqlserver://FALCOWEB\\SQLEXPRESS;DatabaseName=DataDB",
-				"sa", "passw@rd1234");
+				"<mssqlUrlHere>",
+				"<dbUserHere>", "<dbpass>");
 		return conn;
 	}
 
