@@ -2,12 +2,10 @@ package com.falco.views;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.util.prefs.Preferences;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
-import com.falco.constants.Const;
 import com.falco.controller.MainWindowController;
 
 public class MainWindow {
@@ -62,10 +60,7 @@ public class MainWindow {
 		tabbedPane
 				.addTab("In/Out Today", null, new TimeMonitorPersonal(), null); 
 
-		Preferences userpref = Preferences.userNodeForPackage(MainWindowController.class);
-		String leadPwd = userpref.get(Const.LEAD_PW, "");
-		if(!leadPwd.equals(""))
-		tabbedPane.addTab("In/Out Team View", null, new TimeMonitorForLeads(),
+		tabbedPane.addTab("In/Out This Month", null, new TimeMonitorMonthly(),
 				null); 
 		
 		tabbedPane.addTab("User Setting", null, new UserManagement(), null);

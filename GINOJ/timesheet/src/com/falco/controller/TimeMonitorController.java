@@ -10,11 +10,10 @@ import com.falco.dao.TimelogDao;
 import com.falco.dao.impl.TimelogDaoImpl;
 
 public class TimeMonitorController {
-	public void populateGrid(boolean isLead, JTable timeTable) {
-
+	public void populateGrid(boolean isMonthLy, JTable timeTable) {
 		TimelogDao dao = new TimelogDaoImpl();
 		String user = userpref().get(Const.USER_PREF, "");
-		String[][] logs = dao.getTimeLogs(user, isLead);
+		String[][] logs = dao.getTimeLogs(user,isMonthLy);
 		timeTable.setModel(new DefaultTableModel(logs, new String[] { "Date",
 				"CardId", "Name", "Time in", "Time out" }));
 	}

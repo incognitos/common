@@ -19,9 +19,7 @@ public class DBConnection {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		conn = DriverManager.getConnection(
-				"<mssqlUrlHere>",
-				"<dbUserHere>", "<dbpass>");
+		conn = DriverManager.getConnection("<supplyURL_user_pass>");
 		return conn;
 	}
 

@@ -1,77 +1,68 @@
 package com.falco.dao.impl;
 
-import com.falco.dao.TimelogDao;
-
-import com.falco.db.DBConnection;
-
-import com.falco.model.TimeLog;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import com.falco.dao.TimelogDao;
+import com.falco.db.DBConnection;
+import com.falco.model.TimeLog;
 
 /**
  * DOCUMENT ME!
- *
- * @version  $Revision$, $Date$
+ * 
+ * @version $Revision$, $Date$
  */
-public class TimelogDaoImpl implements TimelogDao
-{
-	//~ Methods ----------------------------------
-	/** @see  com.falco.dao.TimelogDao#getTimeLogs(java.lang.String, boolean) */
+public class TimelogDaoImpl implements TimelogDao {
+	// ~ Methods ----------------------------------
+	/** @see com.falco.dao.TimelogDao#getTimeLogs(java.lang.String, boolean) */
 	@Override
-	public String[][] getTimeLogs(String name, boolean isLead)
-	{
+	public String[][] getTimeLogs(String name, boolean isMonthly) {
 		List<TimeLog> logs = new ArrayList<TimeLog>();
 
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(" SELECT *");
-		sb.append(" FROM");
-		sb.append("  (SELECT convert(varchar,getdate(),101) AS date,");
-		sb.append("          cardno,");
-		sb.append("          name,");
-		sb.append("     (SELECT min(trtime)");
-		sb.append("      FROM tbltransaction");
-		sb.append("      WHERE cardno=cdb.cardno");
-		sb.append("        AND trdate>getDate()-1");
-		sb.append("        AND trcode='C0') timein,");
-		sb.append("     (SELECT max(trtime)");
-		sb.append("      FROM tbltransaction");
-		sb.append("      WHERE cardno=cdb.cardno");
-		sb.append("        AND trdate>getDate()-1");
-		sb.append("        AND trcode='CI')timeout");
-		sb.append("   FROM carddb cdb");
-		if (!isLead)
-		{
-			sb.append("   WHERE name=? ");
+		sb.append(" SELECT DISTINCT trdate                     AS date,");
+		sb.append("                 cardno,");
+		sb.append("                 trname,");
+		sb.append("                 (SELECT Min(trtime)");
+		sb.append("                  FROM   tbltransaction");
+		sb.append("                  WHERE  cardno = txn.cardno");
+		sb.append("                         AND CONVERT(VARCHAR, trdate, 112) =");
+		sb.append("                             CONVERT(VARCHAR, txn.trdate, 112)");
+		sb.append("                         AND trcode = 'C0') timein,");
+		sb.append("                 (SELECT Max(trtime)");
+		sb.append("                  FROM   tbltransaction");
+		sb.append("                  WHERE  cardno = txn.cardno");
+		sb.append("                         AND CONVERT(VARCHAR, trdate, 112) =");
+		sb.append("                             CONVERT(VARCHAR, txn.trdate, 112)");
+		sb.append("                         AND trcode = 'CI') timeout");
+		sb.append(" FROM   tbltransaction txn");
+		sb.append(" WHERE  trname = ?");
+		if (!isMonthly) {
+			sb.append("        AND trdate>getDate()-1 ");
+		} else {
+			sb.append("        AND Datename(month, trdate) = Datename(month, Getdate())");
 		}
-		sb.append("	) tbl");
-		sb.append(" WHERE timein IS NOT NULL");
-		sb.append(" ORDER BY name;");
+		sb.append("        AND Datename(year, trdate) = Datename(year, Getdate()) order by trdate");
 
-		try
-		{
+		try {
 			DBConnection db = new DBConnection();
 			PreparedStatement pst = db.getConnection().prepareStatement(
 					sb.toString());
-			if (!isLead)
-			{
-				final int paramIndex = 1;
-				pst.setString(paramIndex, name);
-			}
+
+			final int nameIndex = 1;
+			pst.setString(nameIndex, name);
+
 			ResultSet rs = pst.executeQuery();
-			while (rs.next())
-			{
+			while (rs.next()) {
 				TimeLog log = new TimeLog();
 
 				log.setDate(rs.getString("date"));
 				log.setCardId(rs.getString("cardno"));
-				log.setName(rs.getString("name"));
+				log.setName(rs.getString("trname"));
 				log.setTimeIn(rs.getString("timein"));
 				log.setTimeOut(rs.getString("timeout"));
 
@@ -80,15 +71,12 @@ public class TimelogDaoImpl implements TimelogDao
 			rs.close();
 			pst.close();
 			db.closeConnection();
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			// TO DO some handling here
 			e.printStackTrace();
 		}
 		String[][] logArray = new String[logs.size()][5];
-		for (int i = 0; i < logs.size(); i++)
-		{
+		for (int i = 0; i < logs.size(); i++) {
 			logArray[i][0] = logs.get(i).getDate();
 			logArray[i][1] = logs.get(i).getCardId();
 			logArray[i][2] = logs.get(i).getName();

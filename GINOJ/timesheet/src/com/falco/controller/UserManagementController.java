@@ -32,7 +32,6 @@ public class UserManagementController implements ActionListener {
 
 		if (isDeleteOk == JOptionPane.YES_OPTION) {
 			userpref().remove(Const.USER_PREF);
-			userpref().remove(Const.LEAD_PW);
 			JOptionPane.showMessageDialog(sm,
 					"User deleted new user must be declared on restart");
 		}

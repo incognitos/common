@@ -22,46 +22,19 @@ public class MainWindowController {
 	public void sessionSetting(JFrame mainFrame) {
 		userpref = Preferences.userNodeForPackage(MainWindowController.class);
 		String activeUser = userpref.get(Const.USER_PREF, "");
-		if (activeUser.equals("")) {
-			if(setUserReturnTrueIfOk(mainFrame)){
-				leadpasswordSetting(mainFrame);
-			}
-		}
-	}
-
-	private boolean setUserReturnTrueIfOk(JFrame mainFrame) {
-		boolean isSetupOk = false;
-		String activeUser;
-		activeUser = JOptionPane.showInputDialog("Initalize user Name", "");
 		if (activeUser == null || activeUser.equals("")) {
-			JOptionPane.showMessageDialog(mainFrame,
-					"User must be declared!");
+			activeUser = JOptionPane.showInputDialog("Initalize user Name", "");
+		}
+		if (activeUser == null || activeUser.equals("")) {
+			JOptionPane.showMessageDialog(mainFrame, "User must be declared!");
 			mainFrame.dispatchEvent(new WindowEvent(mainFrame,
 					WindowEvent.WINDOW_CLOSING));
-		}
-		else if(!dao.isValidUserEntry(activeUser)){
-			JOptionPane.showMessageDialog(mainFrame,
-					"User not found in DB!");
+		} else if (!dao.isValidUserEntry(activeUser)) {
+			JOptionPane.showMessageDialog(mainFrame, "User not found in DB!");
 			mainFrame.dispatchEvent(new WindowEvent(mainFrame,
 					WindowEvent.WINDOW_CLOSING));
-		}
-		else {
+		} else {
 			userpref.put(Const.USER_PREF, activeUser);
-			isSetupOk=true;
-		}
-		return isSetupOk;
-	}
-
-	private void leadpasswordSetting(JFrame mainFrame) {
-		String leadPwd="";
-		leadPwd = JOptionPane
-				.showInputDialog("Lead Password (Optional)", "");
-		final boolean isleadNotEmpy = leadPwd!=null&&!leadPwd.equals("");
-		if (isleadNotEmpy && !dao.isValidLeadPassword(leadPwd)) {
-			JOptionPane.showMessageDialog(mainFrame,
-					"Not a valid Lead Password.\nLogging in as regular user.");
-		} else if(isleadNotEmpy){
-			userpref.put(Const.LEAD_PW, leadPwd);
 		}
 	}
 }

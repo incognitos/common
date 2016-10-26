@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import com.falco.controller.TimeMonitorController;
+
 public class TimeMonitor extends JPanel {
 
 	/**
@@ -19,6 +21,8 @@ public class TimeMonitor extends JPanel {
 
 	private JTable timeTable;
 
+	protected TimeMonitorController ctrl;
+
 	private Rectangle timeTableRecDim = new Rectangle(20, 20, 430, 150);// x,y,width,height
 
 	public TimeMonitor() {
@@ -27,6 +31,7 @@ public class TimeMonitor extends JPanel {
 
 	private void initialize() {
 		setLayout(null);
+		ctrl = new TimeMonitorController();
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(getTimeTableRecDim());
 		add(scrollPane);
